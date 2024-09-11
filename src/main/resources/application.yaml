@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: CAMUNDA_SQB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/camunda_sqb
+    username: postgres
+    password: 1113
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 15
+      validation-timeout: 5000
+      max-lifetime: 1800000
+      connection-timeout: 50000
+      idle-timeout: 600000
+      keepalive-time: 900000
+      pool-name: camundaHikariPC
+      register-mbeans: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+  messages:
+    always-use-message-format: true
+  data:
+    rest:
+      default-page-size: 10
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    groups-order: asc
+    operations-sorter: alpha
+    try-it-out-enabled: true
+    tags-sorter: alpha
+    display-request-duration: true
+    doc-expansion: "none"
+  api-docs:
+    path: /api/docs
+camunda:
+  bpm:
+    enabled: true
+
+    admin-user:
+      id: demo
+      password: demo
+      email: botirovn1313@gmail.com
+      first-name: Najmiddin
+      last-name: Botirov
+
+    database:
+      schema-update: true
+
+    filter:
+      create: All
+
+    authorization:
+      enabled: true
+
+    history-level: full
+
+    auto-deployment-enabled: true
+
+    default-number-of-retries: 3
+
+    job-execution:
+      enabled: true
+
+    webapp:
+      application-path: /camunda-ui
+    deployment-resource-pattern: processes/*.bpmn
+server:
+  port: 8089

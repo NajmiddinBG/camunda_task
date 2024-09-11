@@ -1,0 +1,172 @@
+{
+  "components": [
+    {
+      "label": "order id",
+      "type": "number",
+      "id": "Field_1nbshic",
+      "key": "order_id",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "order amount",
+      "type": "number",
+      "id": "Field_0kl1frs",
+      "key": "order_amount",
+      "validate": {
+        "required": true,
+        "min": 0
+      }
+    },
+    {
+      "values": [
+        {
+          "label": "Microloan",
+          "value": "1"
+        },
+        {
+          "label": "Overdraft",
+          "value": "2"
+        }
+      ],
+      "label": "order type",
+      "type": "select",
+      "id": "Field_1ghqyix",
+      "key": "order_type"
+    },
+    {
+      "label": "phone",
+      "type": "textfield",
+      "id": "Field_1chj57w",
+      "key": "phone",
+      "validate": {
+        "required": true,
+        "maxLength": 13,
+        "minLength": 13
+      }
+    },
+    {
+      "label": "pnfl",
+      "type": "textfield",
+      "id": "Field_01r3fg2",
+      "key": "pnfl",
+      "validate": {
+        "required": true,
+        "minLength": 13,
+        "maxLength": 13
+      }
+    },
+    {
+      "label": "birthdate",
+      "type": "textfield",
+      "id": "Field_14d1rms",
+      "key": "birthdate",
+      "validate": {
+        "required": true,
+        "regularExpressionPattern": "\\d{4}-\\d{2}-\\d{2}",
+        "minLength": 10,
+        "maxLength": 10,
+        "pattern": "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+      }
+    },
+    {
+      "label": "firstname",
+      "type": "textfield",
+      "id": "Field_06zxkk3",
+      "key": "firstname",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "lastname",
+      "type": "textfield",
+      "id": "Field_17uam9z",
+      "key": "lastname",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "middle name",
+      "type": "textfield",
+      "id": "Field_0qf4hfz",
+      "key": "middle_name",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "passport number",
+      "type": "textfield",
+      "id": "Field_1vm3bk6",
+      "key": "passport_number",
+      "validate": {
+        "required": true,
+        "minLength": 2,
+        "maxLength": 2
+      }
+    },
+    {
+      "label": "passport series",
+      "type": "textfield",
+      "id": "Field_1wr3xmo",
+      "key": "passport_series",
+      "validate": {
+        "required": true,
+        "minLength": 7,
+        "maxLength": 7
+      }
+    },
+    {
+      "values": [
+        {
+          "label": "male",
+          "value": "1"
+        },
+        {
+          "label": "female",
+          "value": "2"
+        }
+      ],
+      "label": "sex",
+      "type": "select",
+      "id": "Field_0dckp3f",
+      "key": "sex",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "values": [
+        {
+          "value": "6",
+          "label": "6"
+        },
+        {
+          "label": "12",
+          "value": "12"
+        },
+        {
+          "label": "24",
+          "value": "24"
+        }
+      ],
+      "label": "credit duration",
+      "type": "select",
+      "id": "Field_1yq0y9t",
+      "key": "credit_duration",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "schemaVersion": 16,
+  "type": "default",
+  "id": "user_data_form",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.26.0"
+  }
+}
