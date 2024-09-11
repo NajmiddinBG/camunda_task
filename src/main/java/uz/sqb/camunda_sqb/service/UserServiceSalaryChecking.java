@@ -7,17 +7,16 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.stereotype.Service;
 import uz.sqb.camunda_sqb.dto.SalaryResponseDTO;
-import uz.sqb.camunda_sqb.entity.score_value.Result;
+import uz.sqb.camunda_sqb.entity.score.SalaryScoreSetting;
+import uz.sqb.camunda_sqb.entity.score_value.SalaryScoring;
+import uz.sqb.camunda_sqb.entity.user.User;
 import uz.sqb.camunda_sqb.entity.user.UserSalary;
-import uz.sqb.camunda_sqb.enums.CreditType;
-import uz.sqb.camunda_sqb.enums.ResultStatus;
-import uz.sqb.camunda_sqb.repository.ResultRepository;
-import uz.sqb.camunda_sqb.repository.score.SalaryScoreSettingRepository;
+import uz.sqb.camunda_sqb.repository.UserRepository;
 import uz.sqb.camunda_sqb.repository.UserSalaryRepository;
+import uz.sqb.camunda_sqb.repository.score.SalaryScoreSettingRepository;
+import uz.sqb.camunda_sqb.repository.score_value.SalaryScoringRepository;
 import uz.sqb.camunda_sqb.service.utils.SalaryService;
 
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,43 +27,46 @@ public class UserServiceSalaryChecking implements JavaDelegate {
 
     private final SalaryService salaryService;
     private final SalaryScoreSettingRepository salaryScoreSettingRepository;
-    private final ResultRepository resultRepository;
+    private final SalaryScoringRepository salaryScoringRepository;
     private final UserSalaryRepository userSalaryRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void execute(DelegateExecution execution) {
 
         String pnfl = (String) execution.getVariable("user_pnfl");
         Long orderId = (Long) execution.getVariable("order_id");
-        Integer orderType = (Integer) execution.getVariable("order_type");
+
+        User userData = userRepository.findByPnfl(pnfl).orElseThrow(()-> new RuntimeException("User not found"));
+
+//        Integer orderType = (Integer) execution.getVariable("order_type");
         List<SalaryResponseDTO> salaryDetails = salaryService.getSalaryDetails(pnfl);
         Long totalMonthlyAmount = 0L;
+        int activeCount = 0;
         for (SalaryResponseDTO salaryDetail : salaryDetails) {
             UserSalary userSalary = new UserSalary(null, orderId, salaryDetail.getAmount(), salaryDetail.getCompanyName(), salaryDetail.getInn(), salaryDetail.getDate());
             UserSalary savedUserSalary = userSalaryRepository.save(userSalary);
-            totalMonthlyAmount += savedUserSalary.getAmount();
+            if (salaryDetail.getIsActive() == 1) {
+                activeCount++;
+                totalMonthlyAmount += savedUserSalary.getAmount();
+            }
         }
 
-        Optional<LocalDate> oldestDate = salaryDetails.stream()
-                .map(SalaryResponseDTO::getDate)
-                .min(LocalDate::compareTo);
+        Long salaryValue = totalMonthlyAmount/activeCount;
 
-        if (oldestDate.isPresent()) {
-            LocalDate date = oldestDate.get();
-            LocalDate today = LocalDate.now();
+        Optional<SalaryScoreSetting> salaryScoreSetting = salaryScoreSettingRepository.findByBetween(salaryValue);
+        if (salaryScoreSetting.isEmpty()) throw new RuntimeException("Salary Score setting not found");
 
-            // Eng uzoq o'tgan sanadan bugungi kungacha o‘tgan vaqtni hisoblash
-            Period period = Period.between(date, today);
-            int monthsBetween = period.getYears() * 12 + period.getMonths();
+        SalaryScoring scoring = new SalaryScoring();
+        scoring.setSalary(salaryValue);
+        scoring.setSalaryScoreId(salaryScoreSetting.get().getId());
+        scoring.setOrderId(orderId);
+        scoring.setScore(salaryScoreSetting.get().getScore());
 
-            Result result = new Result();
-            result.setOrderId(orderId);
-            result.setStatus(ResultStatus.PROCESSING);
-            result.setTotalScore(0);
+        SalaryScoring savedScoring = salaryScoringRepository.save(scoring);
 
-            result.setCreditType(orderType == 1 ? CreditType.OVERDRAFT : CreditType.MICROZAYM);
-            execution.setVariable("working_month", monthsBetween);
-            execution.setVariable("monthly_amount", totalMonthlyAmount / salaryDetails.size());
-        }
+        execution.setVariable("salary_scoring_object", savedScoring);
+        execution.setVariable("salary_score", savedScoring.getScore());
+
     }
 }

@@ -28,6 +28,6 @@ public class SalaryScoring implements Serializable {
 
     private Long salary;
 
-    private Integer age;
+    private Integer score;
 
 }

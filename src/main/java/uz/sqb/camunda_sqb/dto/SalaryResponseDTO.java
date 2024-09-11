@@ -18,5 +18,6 @@ public class SalaryResponseDTO implements Serializable {
     private String companyName;
     private String inn;
     private LocalDate date;
+    private Integer isActive;
 
 }

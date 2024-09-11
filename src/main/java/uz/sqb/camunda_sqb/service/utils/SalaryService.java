@@ -41,6 +41,7 @@ public class SalaryService {
 
         // 2020 va hozirgi sana orasida random sana
         salaryResponse.setDate(generateRandomDate());
+        salaryResponse.setIsActive(random.nextBoolean() ? 1 : 0);
 
         return salaryResponse;
     }

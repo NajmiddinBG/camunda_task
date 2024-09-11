@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface AgeScoreSettingRepository extends JpaRepository<AgeScoreSetting, Integer> {
 
-    @Query("FROM AgeScoreSetting a WHERE a.paramFrom >= :userAge AND a.paramTo < :userAge ORDER BY a.paramFrom ASC")
+    @Query("FROM AgeScoreSetting a WHERE a.paramFrom >= :userAge AND a.paramTo < :userAge")
     Optional<AgeScoreSetting> findFirstByBetween(int userAge);
 }
